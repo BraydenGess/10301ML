@@ -53,10 +53,10 @@ def get_metrics(model,data):
 
 def file_out_metrics(error_train,error_test,metrics_file):
     f = open(metrics_file,'w')
-    f.write("error(train):")
+    f.write("error(train): ")
     f.write(error_train)
     f.write('\n')
-    f.write("error(test):")
+    f.write("error(test): ")
     f.write(error_test)
     f.close()
 
