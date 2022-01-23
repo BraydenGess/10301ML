@@ -13,7 +13,7 @@ def train_majorityvote(train_data):
     for outcome in outcomes:
         if outcomes[outcome] > frequency:
             if outcomes[outcome] == frequency:
-                if outcome > label:
+                if outcome < label:
                     frequency = outcomes[outcome]
                     label = outcome
             else:
@@ -43,13 +43,13 @@ def file_out_labels(model,data,output_file):
 
 def get_metrics(model,data):
     total = 0
-    correct = 0
+    mistakes = 0
     last_index = len(data[0]) - 1
     for element in data:
         total += 1
         if element[last_index] == model:
-            correct += 1
-    return str(correct/total)
+            mistakes += 1
+    return str(mistakes/total)
 
 def file_out_metrics(error_train,error_test,metrics_file):
     f = open(metrics_file,'w')
