@@ -13,7 +13,7 @@ def train_majorityvote(train_data):
     for outcome in outcomes:
         if outcomes[outcome] > frequency:
             if outcomes[outcome] == frequency:
-                if outcome < label:
+                if outcome > label:
                     frequency = outcomes[outcome]
                     label = outcome
             else:
