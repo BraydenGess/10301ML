@@ -47,7 +47,7 @@ def get_metrics(model,data):
     last_index = len(data[0]) - 1
     for element in data:
         total += 1
-        if element[last_index] == model:
+        if element[last_index] != model:
             mistakes += 1
     return str(mistakes/total)
 
