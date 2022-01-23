@@ -9,9 +9,9 @@ def train_majorityvote(train_data):
         else:
             outcomes[element[last_index]] = 1
     frequency = 0
-    label = 'Z'
+    label = 'A'
     for outcome in outcomes:
-        if outcomes[outcome] > frequency:
+        if outcomes[outcome] >= frequency:
             if outcomes[outcome] == frequency:
                 if outcome > label:
                     frequency = outcomes[outcome]
