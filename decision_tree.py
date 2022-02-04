@@ -148,34 +148,43 @@ def train_tree(data,outcome_list,depth,max_depth,entropy):
             else:
                 right_data.append(data[i])
     gc,current_dictionary = majority_vote(data,outcome_list)
-    new_node = Node(attribute=data[0][mutual_index],left_label=label_list[0],right_label=label_list[1],
+    if len(label_list) == 2:
+        new_node = Node(attribute=data[0][mutual_index],left_label=label_list[0],right_label=label_list[1],
                     left=train_tree(left_data,outcome_list,depth+1,max_depth,entropy),
                     right=train_tree(right_data,outcome_list,depth+1,max_depth,entropy),
                     dict = current_dictionary)
+    else:
+        new_node = Node(attribute=data[0][mutual_index], left_label=label_list[0],
+                        left=train_tree(left_data, outcome_list, depth + 1, max_depth, entropy),
+                        dict=current_dictionary)
     return new_node
 
 def print_tree(root,depth):
-    right_text = ''
-    left_text = ''
-    for i in range(depth):
-        right_text += '| '
-        left_text += '| '
-    right_text += root.attribute
-    right_text += ' = '
-    right_text += root.right_label
-    right_text += ': '
-    right_text += dict_to_output(root.right.dict)
-    print(right_text)
-    if root.right.value == None:
-        print_tree(root.right,depth+1)
-    left_text += root.attribute
-    left_text += ' = '
-    left_text += root.left_label
-    left_text += ': '
-    left_text += dict_to_output(root.left.dict)
-    print(left_text)
-    if root.left.value == None:
-        print_tree(root.left,depth+1)
+    if root.value == None:
+        right_text = ''
+        left_text = ''
+        for i in range(depth):
+            right_text += '| '
+            left_text += '| '
+        if root.right_label != None:
+            right_text += root.attribute
+            right_text += ' = '
+            right_text += root.right_label
+            right_text += ': '
+            right_text += dict_to_output(root.right.dict)
+            if root.right.value == None:
+                print_tree(root.right,depth+1)
+        if root.left_label != None:
+            left_text += root.attribute
+            left_text += ' = '
+            left_text += root.left_label
+            left_text += ': '
+            left_text += dict_to_output(root.left.dict)
+            print(left_text)
+            if root.left.value == None:
+                print_tree(root.left,depth+1)
+    else:
+        dict_to_output(root.dict)
 
 def predict_helper(data,root,attributes):
     if root.value == None:
@@ -235,12 +244,9 @@ def main():
     training_predictions = predict(training_data,root)
     testing_predictions = predict(testing_data, root)
     training_error = evaluate(training_data,training_predictions)
-    testing_error = evaluate(testing_data, testing_predictions)
+    testing_error = evaluate(testing_data,testing_predictions)
     writeto_labeling_file(train_label_file,training_predictions)
     writeto_labeling_file(test_label_file,testing_predictions)
     writeto_metrics(metric_file, training_error, testing_error)
-
-
-
 
 main()
