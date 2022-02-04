@@ -52,8 +52,7 @@ def main():
     data = get_data(input_file)
     entropy,outcome_dict = calculate_entropy(data)
     error = calculate_error(outcome_dict)
-    write_to_file(entropy, error,output_file)
+    write_to_file(entropy,error,output_file)
 
-
-if __name__ == "main":
+if __name__ == "__main__":
     main()
