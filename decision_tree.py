@@ -108,12 +108,6 @@ def get_best_mutual_information(data,entropy,outcome_list):
                 max_index = i
                 max_name = data[0][i]
                 max_attribute_dict = attribute_dict
-            elif entropy-mutual_info == max:
-                if data[0][i] < max_name:
-                    max = entropy - mutual_info
-                    max_index = i
-                    max_name = data[0][i]
-                    max_attribute_dict = attribute_dict
     return max_index,max_attribute_dict
 
 def train_tree(data,outcome_list,depth,max_depth,entropy):
@@ -192,9 +186,9 @@ def predict_helper(data,root,attributes):
         index = attributes.index(root.attribute)
         value = data[index]
         if value == root.left_label:
-            return predict_helper(data,root.left, attributes)
+            return predict_helper(data,root.left,attributes)
         elif value == root.right_label:
-            return predict_helper(data,root.right, attributes)
+            return predict_helper(data,root.right,attributes)
     else:
         return root.value
 
