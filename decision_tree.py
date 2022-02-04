@@ -172,6 +172,7 @@ def print_tree(root,depth):
             right_text += root.right_label
             right_text += ': '
             right_text += dict_to_output(root.right.dict)
+            print(right_text)
             if root.right.value == None:
                 print_tree(root.right,depth+1)
         if root.left_label != None:
