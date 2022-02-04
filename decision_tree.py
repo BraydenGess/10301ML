@@ -65,7 +65,7 @@ def majority_vote(data,outcome_list):
             max = outcome_dict[element]
             max_label = element
         elif outcome_dict[element] == max:
-            if element<max_label:
+            if element>max_label:
                 max = outcome_dict[element]
                 max_label = element
     return max_label,outcome_dict
