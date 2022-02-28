@@ -116,7 +116,7 @@ def main():
     format_out = sys.argv[6]
     format_validation_out = sys.argv[7]
     format_test_out = sys.argv[8]
-    feature_flag = sys.argv[9]
+    feature_flag = int(sys.argv[9])
 
     ### Feature Modeling ###
     if feature_flag == 1:
