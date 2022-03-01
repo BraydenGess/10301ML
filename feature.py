@@ -1,124 +1,136 @@
 import sys
+import csv
 import numpy as np
-from numpy import genfromtxt
-import math
 
-def numpy_matrix(file):
-    data = np.loadtxt(file, delimiter='\t')
-    return data
+def bag_of_words_dict(dict_file):
+    new_dict = dict()
+    with open(dict_file) as f:
+        tsv_file = csv.reader(f, delimiter="\t")
+        for line in tsv_file:
+            line = line[0].split(" ")
+            new_dict[line[0]] = line[1]
+    return new_dict
 
-def important_values(labels,attributes,theta,rows,cols):
-    y_hat = np.matmul(attributes,theta)
-    dot_product = np.dot(labels,np.transpose(y_hat))
-    y0x = dot_product[0][0]
-    e0x = np.power(math.e,y_hat)
-    plus_one = np.ones([rows,1])
-    one_plus_e0x = np.add(plus_one,e0x)
-    log = np.log(one_plus_e0x)
-    return y_hat,e0x,one_plus_e0x,log,y0x
+def clean_reviews(bag_dict,reviews,output_file):
+    with open(output_file,'w') as f:
+        pass
+    count = 0
+    length = len(bag_dict)
+    with open(reviews,'r') as f:
+        tsv_file = csv.reader(f, delimiter="\t")
+        for line in tsv_file:
+            v = [0] * (length+1)
+            review = line[1].split(' ')
+            v[0] = int(line[0])
+            for element in review:
+                if element in bag_dict:
+                    v[int(bag_dict[element])+1] = 1
+            count += 1
+            bag_output(v,output_file)
 
-def J0(labels,attributes,theta,rows,cols):
-    y_hat,e0x,one_plus_e0x,log,y0x = important_values(labels,attributes,theta,rows,cols)
-    OBJ_F = (1/rows)*(y0x + np.sum(log))
-    return OBJ_F,y_hat,e0x,one_plus_e0x,log,y0x
-
-def sigmoid(x):
-    result = 1/(1+math.e**(-1*x))
-    return result
-
-def derivative_J(labels,attributes,theta,learning_rate,rows,cols,y_hat,e0x,one_plus_e0x):
-    #new_theta = np.copy(theta)
-    theta = np.transpose(theta)
-    labels = np.transpose(labels)
-    for i in range(rows):
-        example = attributes[i]
-        x = np.matmul(theta, example)
-        sigma = sigmoid(x) - labels[0][i]
-        sigma_vector = np.full((1, cols), sigma)
-        change = np.multiply(sigma_vector, example)
-        change = change * learning_rate
-        theta = theta - change
-    return np.transpose(theta)
-
-def one_iteration(labels,attributes,learning_rate,theta,rows,cols):
-    OBJ_F,y_hat,e0x,one_plus_e0x,log,y0x = J0(labels, attributes, theta, rows, cols)
-    new_theta = derivative_J(labels,attributes,theta,learning_rate,rows,cols,y_hat,e0x,one_plus_e0x)
-    return new_theta,OBJ_F
-
-def split_data(matrix):
-    (rows, cols) = matrix.shape
-    labels = matrix[:,:1]
-    attributes = matrix[:,1:]
-    attribute_bias = np.ones([1, rows])
-    attributes = np.insert(attributes, 0, attribute_bias, axis=1)
-    return labels,attributes
-
-def train_model(matrix,num_epochs,learning_rate):
-    (rows,cols) = matrix.shape
-    theta = np.zeros([cols,1])
-    labels, attributes = split_data(matrix)
-    for i in range(num_epochs):
-        theta,OBJ_F = one_iteration(labels,attributes,learning_rate,theta,rows,cols)
-    return theta,labels,attributes
-
-def test_model(weights,attributes,labels,file):
-    [rows,cols] = labels.shape
-    answers = np.matmul(np.transpose(weights),np.transpose(attributes))
-    errors = 0
-    with open(file,'w') as f:
-        f.close()
-    for i in range(rows):
-        pred = 1/(1+math.e**(-1*answers[0][i]))
-        actual = labels[i]
-        if pred >= .5:
-            pred = 1
-        else:
-            pred = 0
-        if (pred != actual):
-            errors += 1
-        with open(file,'a') as f:
-            f.write(str(pred))
-            if (i != rows-1):
-                f.write('\n')
-    return (errors/rows)
-
-def metrics_out(file,train_error,test_error):
-    with open(file,'w') as f:
-        f.write('error(train): ')
-        f.write(str(train_error))
+def bag_output(vector,output_file):
+    with open(output_file,'a') as f:
+        rows = len(vector)
+        for j in range(rows):
+            if vector[j] >= .5:
+                f.write('1')
+            else:
+                f.write('0')
+            if (j != rows-1):
+                f.write('\t')
         f.write('\n')
-        f.write('error(test): ')
-        f.write(str(test_error))
+
+def test_output(format_out,format_test):
+    my_data = []
+    test_data = []
+    with open(format_out) as f:
+        tsv_file = csv.reader(f, delimiter="\t")
+        for line in tsv_file:
+            my_data.append(line)
+    f.close()
+    with open(format_test) as f:
+        tsv_file = csv.reader(f, delimiter="\t")
+        for line in tsv_file:
+            test_data.append(line)
+    f.close()
+    for i in range(len(my_data)):
+        for j in range(len(my_data[i])):
+            if abs((float(my_data[i][j])-float(test_data[i][j])))>.00001:
+               print(i,j,my_data[i][j],test_data[i][j])
+
+def get_word2vec_dict(dict_file):
+    new_dict = dict()
+    count = 0
+    with open(dict_file) as f:
+        tsv_file = csv.reader(f, delimiter="\t")
+        for line in tsv_file:
+            new_dict[line[0]] = np.array(line[1:],dtype=np.float64)
+    return new_dict
+
+def embed_words(word2vec_dict,input_file,output_file):
+    with open(output_file,'w') as f:
+        pass
+    with open(input_file,'r') as f:
+        tsv_file = csv.reader(f, delimiter="\t")
+        a = True
+        for line in tsv_file:
+            result = np.zeros([1,300],dtype=np.float64)
+            label = line[0]
+            review = line[1].split(" ")
+            counter = 0
+            for element in review:
+                if element in word2vec_dict:
+                    counter += 1
+                    result = np.add(result,word2vec_dict[element])
+            word2_vec_output(result,output_file,counter,label)
+
+def word2_vec_output(vector,output_file,counter,label):
+    with open(output_file,'a') as f:
+        f.write(label)
+        f.write('\t')
+        for j in range(300):
+            number = round(vector[0,j]/counter,6)
+            f.write(str(number))
+            if (j != 299):
+                f.write('\t')
+        f.write('\n')
 
 def main():
-    #train_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_train.tsv'
-    #validation_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_valid.tsv'
-    #test_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_test.tsv'
-    #train_out_file = 'train_labels.txt'
-    #test_out_file = 'test_label.txt'
-    #metrics_file = 'metrics.txt'
-    #num_epochs = 500
-    #learning_rate = .00001
-    train_input = sys.argv[1]
-    validation_input = sys.argv[2]
-    test_input = sys.argv[3]
-    train_out_file = sys.argv[4]
-    test_out_file = sys.argv[5]
-    metrics_file = sys.argv[6]
-    num_epochs = int(sys.argv[7])
-    learning_rate = float(sys.argv[8])
+    #input_file = "/Users/BradyGess/Downloads/hw4/handout/largedata/train_data.tsv"
+    #validation_file = "/Users/BradyGess/Downloads/hw4/handout/largedata/valid_data.tsv"
+    #test_file = "/Users/BradyGess/Downloads/hw4/handout/largedata/test_data.tsv"
+    #dict_file = "/Users/BradyGess/Downloads/hw4/handout/dict.txt"
+    #feature_file = "/Users/BradyGess/Downloads/hw4/handout/word2vec.txt"
+    #format_out = "feature_output.txt"
+    #format_validation_out = "format_valid.txt"
+    #format_test_out = "format_test.txt"
+    #feature_flag = 1
+    #format_ttrain = '/Users/BradyGess/Downloads/hw4/handout/smalloutput/model2_formatted_train.tsv'
+    #format_tvalid = '/Users/BradyGess/Downloads/hw4/handout/smalloutput/model1_formatted_valid.tsv'
+    #format_ttest = '/Users/BradyGess/Downloads/hw4/handout/smalloutput/model1_formatted_test.tsv'
+    input_file = sys.argv[1]
+    validation_file = sys.argv[2]
+    test_file = sys.argv[3]
+    dict_file = sys.argv[4]
+    feature_file = sys.argv[5]
+    format_out = sys.argv[6]
+    format_validation_out = sys.argv[7]
+    format_test_out = sys.argv[8]
+    feature_flag = int(sys.argv[9])
 
-    ###train the model
-    training_data = numpy_matrix(train_input)
-    weights,training_labels,attributes = train_model(training_data,num_epochs,learning_rate)
-    ###testing the model###
-    train_error = test_model(weights,attributes,training_labels,train_out_file)
-    testing_data = numpy_matrix(test_input)
-    test_labels, test_attributes = split_data(testing_data)
-    test_error = test_model(weights,test_attributes,test_labels,test_out_file)
-    metrics_out(metrics_file,train_error,test_error)
+    ### Feature Modeling ###
+    if feature_flag == 1:
+        bag_dict = bag_of_words_dict(dict_file)
+        clean_reviews(bag_dict,input_file,format_out)
+        clean_reviews(bag_dict,validation_file, format_validation_out)
+        clean_reviews(bag_dict,test_file, format_test_out)
+    if feature_flag == 2:
+        word2vec_dict = get_word2vec_dict(feature_file)
+        embed_words(word2vec_dict,input_file,format_out)
+        embed_words(word2vec_dict,validation_file, format_validation_out)
+        embed_words(word2vec_dict,test_file, format_test_out)
 
-
+    #test_output(format_out, format_ttrain)
 
 if __name__ == "__main__":
     main()
