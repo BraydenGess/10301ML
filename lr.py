@@ -4,11 +4,11 @@ from numpy import genfromtxt
 import math
 
 def numpy_matrix(file):
-    data = genfromtxt(file, delimiter='\t')
+    data = np.loadtxt(file, delimiter='\t')
     return data
 
 def important_values(labels,attributes,theta,rows,cols):
-    y_hat = np.matmul(attributes, theta)
+    y_hat = np.matmul(attributes,theta)
     dot_product = np.dot(labels,np.transpose(y_hat))
     y0x = dot_product[0][0]
     e0x = np.power(math.e,y_hat)
@@ -22,16 +22,23 @@ def J0(labels,attributes,theta,rows,cols):
     OBJ_F = (1/rows)*(y0x + np.sum(log))
     return OBJ_F,y_hat,e0x,one_plus_e0x,log,y0x
 
+def sigmoid(x):
+    result = 1/(1+math.e**(-1*x))
+    return result
+
 def derivative_J(labels,attributes,theta,learning_rate,rows,cols,y_hat,e0x,one_plus_e0x):
-    inverse_one_plus_e0x = np.power(one_plus_e0x,-1)
-    right_part = np.matmul(inverse_one_plus_e0x,np.transpose(e0x))
-    new_right_part = np.diagonal(right_part)
-    new_right_part = np.diagonal(np.subtract(labels,new_right_part))
-    gradient = np.matmul(np.transpose(attributes),new_right_part)
-    change = learning_rate*gradient
-    change.resize((cols,1))
-    new_theta = np.add(theta,change)
-    return new_theta
+    #new_theta = np.copy(theta)
+    theta = np.transpose(theta)
+    labels = np.transpose(labels)
+    for i in range(rows):
+        example = attributes[i]
+        x = np.matmul(theta, example)
+        sigma = sigmoid(x) - labels[0][i]
+        sigma_vector = np.full((1, cols), sigma)
+        change = np.multiply(sigma_vector, example)
+        change = change * learning_rate
+        theta = theta - change
+    return np.transpose(theta)
 
 def one_iteration(labels,attributes,learning_rate,theta,rows,cols):
     OBJ_F,y_hat,e0x,one_plus_e0x,log,y0x = J0(labels, attributes, theta, rows, cols)
@@ -40,8 +47,8 @@ def one_iteration(labels,attributes,learning_rate,theta,rows,cols):
 
 def split_data(matrix):
     (rows, cols) = matrix.shape
-    labels = matrix[:, :1]
-    attributes = matrix[:, 1:]
+    labels = matrix[:,:1]
+    attributes = matrix[:,1:]
     attribute_bias = np.ones([1, rows])
     attributes = np.insert(attributes, 0, attribute_bias, axis=1)
     return labels,attributes
@@ -50,7 +57,6 @@ def train_model(matrix,num_epochs,learning_rate):
     (rows,cols) = matrix.shape
     theta = np.zeros([cols,1])
     labels, attributes = split_data(matrix)
-    count = 1
     for i in range(num_epochs):
         theta,OBJ_F = one_iteration(labels,attributes,learning_rate,theta,rows,cols)
     return theta,labels,attributes
@@ -85,9 +91,9 @@ def metrics_out(file,train_error,test_error):
         f.write(str(test_error))
 
 def main():
-    #train_input = 'feature_output.txt'
-    #validation_input = 'format_valid.txt'
-    #test_input = 'format_test.txt'
+    #train_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_train.tsv'
+    #validation_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_valid.tsv'
+    #test_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_test.tsv'
     #train_out_file = 'train_labels.txt'
     #test_out_file = 'test_label.txt'
     #metrics_file = 'metrics.txt'
