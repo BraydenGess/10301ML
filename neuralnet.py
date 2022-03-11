@@ -49,7 +49,6 @@ def FeedForward(X,Y,alpha,beta):
     z = add_bias_term(z_old)
     raw_output = np.asarray(np.matmul(z, np.transpose(beta)))
     output = softmax(np.asarray(raw_output))
-    cost = loss_function(Y,output)
     hot_vector = np.zeros(output.shape[1])
     hot_vector[int(Y)] = 1
     return output,hot_vector,z,z_old
@@ -78,15 +77,22 @@ def shuffle(X, y, epoch):
     return X[ordering], y[ordering]
 
 def cross_entropy(attributes,labels,alpha,beta):
-    (rows,cols) = attributes.shape
-    sum = 0
-    for i in range(rows):
-        X = np.asmatrix(attributes[i])
-        Y = labels[i]
-        output, hot_vector, z, z_old = FeedForward(X, Y, alpha, beta)
-        new_hotvector = np.transpose(np.asmatrix(hot_vector))
-        sum += math.log(np.matmul(output,new_hotvector))
-    return sum/rows
+    (label_rows,label_cols) = labels.shape
+    raw_activation = np.matmul(attributes, np.transpose(alpha))
+    z_old = sigmoid(np.asarray(raw_activation))
+    z = add_bias_term(z_old)
+    raw_output = np.asarray(np.matmul(z, np.transpose(beta)))
+    set_up = raw_output - np.max(raw_output, axis=1)[:, np.newaxis]
+    output = np.exp(set_up) / np.sum(np.exp(set_up), axis=1)[:, np.newaxis]
+    (output_rows,output_cols) = output.shape
+    hot_matrix = np.zeros((label_rows,output_cols))
+    for i in range(label_rows):
+        hot_matrix[i][int(labels[i])] = 1
+    new_hotmatrix = np.transpose(np.asmatrix(hot_matrix))
+    output = np.log(output)
+    x = np.diagonal(np.matmul(output,new_hotmatrix))
+    x = np.sum(x)
+    return (x/label_rows)
 
 def adjust_weights(S_beta, S_alpha, alpha, beta, dldB, dalpha, learning_rate):
     ###Beta
@@ -159,13 +165,21 @@ def predict(attributes,labels,alpha,beta,file):
             actual = int(Y[0])
             if actual == prediction:
                 correct += 1
-            #print(f'{j}---->{actual},{prediction}')
             f.write(str(prediction))
             f.write('\n')
     return (1 - (correct/rows))
 
 
 def main():
+    #train_input = '/Users/BradyGess/Downloads/hw5/handout/small_train_data.csv'
+    #valid_input = '/Users/BradyGess/Downloads/hw5/handout/small_validation_data.csv'
+    #train_out = 'train_labels.txt'
+    #validation_out = 'output.txt'
+    #metrics_out = 'metrics.txt'
+    #num_epochs = 500
+    #hidden_units = 4
+    #init_flag = 2
+    #learning_rate = 0.1
     train_input = sys.argv[1]
     valid_input = sys.argv[2]
     train_out = sys.argv[3]
