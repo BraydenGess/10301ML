@@ -1,7 +1,5 @@
 import sys
 import numpy
-from utils import *
-
 
 def get_parameters(sequences,tags,index_to_word,index_to_tag):
     classification_count = len(index_to_tag)
