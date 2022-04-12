@@ -58,13 +58,13 @@ def forwardbackward(sequences,tags,pi,A,B,index_to_word,index_to_tag,predicted_f
             for guess in range(len(tags_index)):
                 total += 1
                 if index_to_tag[tags[i][guess]] == tags_index[guess]:
-                    word = sequences[i][guess]
-                    tag = tag_to_index[tags_index[guess]]
-                    f.write(str(word))
-                    f.write('\t')
-                    f.write(str(tag))
-                    f.write('\n')
                     correct += 1
+                word = sequences[i][guess]
+                tag = tag_to_index[tags_index[guess]]
+                f.write(str(word))
+                f.write('\t')
+                f.write(str(tag))
+                f.write('\n')
             f.write('\n')
         accuracy = correct/total
         log_liklihood = log_sum/len(sequences)
