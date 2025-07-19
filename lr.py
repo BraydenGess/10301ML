@@ -91,14 +91,6 @@ def metrics_out(file,train_error,test_error):
         f.write(str(test_error))
 
 def main():
-    #train_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_train.tsv'
-    #validation_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_valid.tsv'
-    #test_input = '/Users/BradyGess/Downloads/hw4/handout/largeoutput/model1_formatted_test.tsv'
-    #train_out_file = 'train_labels.txt'
-    #test_out_file = 'test_label.txt'
-    #metrics_file = 'metrics.txt'
-    #num_epochs = 500
-    #learning_rate = .00001
     train_input = sys.argv[1]
     validation_input = sys.argv[2]
     test_input = sys.argv[3]
