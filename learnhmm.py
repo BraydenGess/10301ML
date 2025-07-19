@@ -41,12 +41,6 @@ def write_hmm_emit(hmm_emit,file):
     np.savetxt(file,hmm_trans, fmt='%.6f')
 
 def main():
-    #train_file ='/Users/BradyGess/Downloads/hw7/handout/fr_data/train.txt'
-    #index_to_word_file = '/Users/BradyGess/Downloads/hw7/handout/fr_data/index_to_word.txt'
-    #index_to_tag_file = '/Users/BradyGess/Downloads/hw7/handout/fr_data/index_to_tag.txt'
-    #hmminit_file =  'hmm_init_results.txt'
-    #hmmemit_file = 'hmm_emit_results.txt'
-    #hmmtrans_file = 'hmm_trans_results.txt'
     train_file = sys.argv[1]
     index_to_word_file = sys.argv[2]
     index_to_tag_file = sys.argv[3]
