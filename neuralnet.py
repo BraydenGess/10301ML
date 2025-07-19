@@ -171,15 +171,6 @@ def predict(attributes,labels,alpha,beta,file):
 
 
 def main():
-    #train_input = '/Users/BradyGess/Downloads/hw5/handout/small_train_data.csv'
-    #valid_input = '/Users/BradyGess/Downloads/hw5/handout/small_validation_data.csv'
-    #train_out = 'train_labels.txt'
-    #validation_out = 'output.txt'
-    #metrics_out = 'metrics.txt'
-    #num_epochs = 500
-    #hidden_units = 4
-    #init_flag = 2
-    #learning_rate = 0.1
     train_input = sys.argv[1]
     valid_input = sys.argv[2]
     train_out = sys.argv[3]
