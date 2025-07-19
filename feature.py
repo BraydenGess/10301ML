@@ -96,18 +96,6 @@ def word2_vec_output(vector,output_file,counter,label):
         f.write('\n')
 
 def main():
-    #input_file = "/Users/BradyGess/Downloads/hw4/handout/largedata/train_data.tsv"
-    #validation_file = "/Users/BradyGess/Downloads/hw4/handout/largedata/valid_data.tsv"
-    #test_file = "/Users/BradyGess/Downloads/hw4/handout/largedata/test_data.tsv"
-    #dict_file = "/Users/BradyGess/Downloads/hw4/handout/dict.txt"
-    #feature_file = "/Users/BradyGess/Downloads/hw4/handout/word2vec.txt"
-    #format_out = "feature_output.txt"
-    #format_validation_out = "format_valid.txt"
-    #format_test_out = "format_test.txt"
-    #feature_flag = 1
-    #format_ttrain = '/Users/BradyGess/Downloads/hw4/handout/smalloutput/model2_formatted_train.tsv'
-    #format_tvalid = '/Users/BradyGess/Downloads/hw4/handout/smalloutput/model1_formatted_valid.tsv'
-    #format_ttest = '/Users/BradyGess/Downloads/hw4/handout/smalloutput/model1_formatted_test.tsv'
     input_file = sys.argv[1]
     validation_file = sys.argv[2]
     test_file = sys.argv[3]
