@@ -74,14 +74,6 @@ def forwardbackward(sequences,tags,pi,A,B,index_to_word,index_to_tag,predicted_f
 
 
 def main():
-    #validation_input_file = '/Users/BradyGess/Downloads/hw7/handout/fr_data/validation.txt'
-    #index_to_word_file ='/Users/BradyGess/Downloads/hw7/handout/fr_data/index_to_word.txt'
-    #index_to_tag_file ='/Users/BradyGess/Downloads/hw7/handout/fr_data/index_to_tag.txt'
-    #hmminit_file ='/Users/BradyGess/Downloads/hw7/handout/fr_output/hmminit.txt'
-    #hmmemit_file ='/Users/BradyGess/Downloads/hw7/handout/fr_output/hmmemit.txt'
-    #hmmtrans_file ='/Users/BradyGess/Downloads/hw7/handout/fr_output/hmmtrans.txt'
-    #predicted_file ='test_labels.txt'
-    #metrics_file ='metrics.txt'
     validation_input_file = sys.argv[1]
     index_to_word_file = sys.argv[2]
     index_to_tag_file = sys.argv[3]
