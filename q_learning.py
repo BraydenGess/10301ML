@@ -81,15 +81,6 @@ def main():
     epsilon = float(sys.argv[7])
     gamma = float(sys.argv[8])
     learning_rate = float(sys.argv[9])
-    #env = 'gw'
-    #mode = 'tile'
-    #weight_out = 'metrics.txt'
-    #returns_out = 'output.txt'
-    #episodes = int('3')
-    #max_iterations = int('5')
-    #epsilon = float('0')
-    #gamma = float('0.9')
-    #learning_rate = float('0.01')
     bias,weights,episode_rewards = q_learning(env, mode, episodes, max_iterations, epsilon, gamma, learning_rate)
     write_to_files(weight_out, bias, weights,returns_out,episode_rewards)
 
